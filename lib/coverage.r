@@ -577,7 +577,7 @@ chunkIndex <- function(tot.gene, gcs) {
     chkidx.list
 }
 
-covMatrix <- function(debug, chkidx.list, coord, rnaseq.gb, exonmodel, libsize, 
+covMatrix <- function(flynorm, debug, chkidx.list, coord, rnaseq.gb, exonmodel, libsize, 
                       spit.dot=T, ...) {
 # Function to generate a coverage matrix for all genes.
 # Args:
@@ -610,7 +610,7 @@ covMatrix <- function(debug, chkidx.list, coord, rnaseq.gb, exonmodel, libsize,
 
         # Floor negative values which are caused by spline.
         result.matrix[result.matrix < 0] <- 0
-        result.matrix / libsize * 1e6  # normalize to RPM.
+        result.matrix * flynorm #/ libsize * 1e6  # normalize to RPM.
 
     } else {
         for(c in 1:length(chkidx.list)) {
@@ -632,7 +632,7 @@ covMatrix <- function(debug, chkidx.list, coord, rnaseq.gb, exonmodel, libsize,
         # Floor negative values which are caused by spline.
         # browser()
         result.matrix[result.matrix < 0] <- 0
-        result.matrix / libsize * 1e6  # normalize to RPM.
+        result.matrix * flynorm #/ libsize * 1e6  # normalize to RPM.
 
     }
 }

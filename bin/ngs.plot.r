@@ -47,6 +47,7 @@ cmd.help <- function(){
 ###########################################################################
 #################### Deal with program input arguments ####################
 args <- commandArgs(T)
+args <-c("-G","hg19","-R","tss","-C","25_2264CP_KARPAS-422_DMSO_8d_H3K27me3_i94-hg19-dm6-human.bam", "-O","plots/-tss-plots","-T","test","-L","3000","-FL","300","-flynorm","1.3","-debug","1" )
 # args <- unlist(strsplit('-G hg19 -C config.k4k27.inp.txt -R tss -O test_extr_cluster -S 0.1 -Debug 1', ' '))
 
 # Input argument parser.
@@ -58,6 +59,7 @@ if(is.null(args.tbl)){
 genome <- args.tbl['-G']
 reg2plot <- args.tbl['-R']
 oname <- args.tbl['-O']
+flynorm <- as.numeric(args.tbl['-flynorm'])
 
 cat("Configuring variables...")
 # Load tables of database: default.tbl, dbfile.tbl
@@ -190,7 +192,7 @@ for(r in 1:nrow(ctg.tbl)) {  # r: index of plots/profiles.
     }
     # browser()
     # Rprof("Rprof_covBamExons2.out", append=T)
-    result.matrix <- covMatrix(debug, chkidx.list, coord.list[[reg]], rnaseq.gb, 
+    result.matrix <- covMatrix(flynorm, debug, chkidx.list, coord.list[[reg]], rnaseq.gb, 
                                exonmodel, libsize, TRUE, chr.tag, pint, 
                                reg2plot, flanksize, flankfactor, m.pts, f.pts, 
                                bufsize, cov.algo, bam.files[1], sn.inbam, 
@@ -207,7 +209,7 @@ for(r in 1:nrow(ctg.tbl)) {  # r: index of plots/profiles.
         if(class(chr.tag) == 'character') {
             stop(sprintf("Read %s error: %s", bam.files[2], chr.tag))
         }
-        bkg.matrix <- covMatrix(debug, chkidx.list, coord.list[[reg]], rnaseq.gb, 
+        bkg.matrix <- covMatrix(flynorm, debug, chkidx.list, coord.list[[reg]], rnaseq.gb, 
                                 exonmodel, libsize, TRUE, chr.tag, pint, 
                                 reg2plot, flanksize, flankfactor, m.pts, f.pts, 
                                 bufsize, cov.algo, bam.files[2], sn.inbam, 
