@@ -28,7 +28,7 @@ parseArgs <- function(args, manditories) {
     res
 }
 
-ConfigTbl <- function(args.tbl, fraglen) {
+ConfigTbl <- function(args.tbl, fraglen, normfactor) {
 # Create configuration table from "-C" argument.
 # Args:
 #   args.tbl: named vector of program arguments.
@@ -51,7 +51,7 @@ ConfigTbl <- function(args.tbl, fraglen) {
                 } else {
                     title <- 'Noname'
                 }
-                data.frame(cov=covfile, glist=glist, title=title, 
+                data.frame(cov=covfile, flynorm=normfactor, glist=glist, title=title, 
                            fraglen=as.character(fraglen), 
                            color=NA, stringsAsFactors=F)
             }
@@ -63,9 +63,9 @@ ConfigTbl <- function(args.tbl, fraglen) {
         stop("Configuration file must contain at least 3 columns! 
 Insufficient information provided.\n")
     }
-    colnames(ctg.tbl)[1:3] <- c('cov', 'glist', 'title')
-    if(ncol(ctg.tbl) >= 4) {
-        colnames(ctg.tbl)[4] <- 'fraglen'
+    colnames(ctg.tbl)[1:4] <- c('cov', 'flynorm', 'glist', 'title')
+    if(ncol(ctg.tbl) >= 5) {
+        colnames(ctg.tbl)[5] <- 'fraglen'
         fraglen.sp <- strsplit(ctg.tbl$fraglen, ":")
         if(!all(sapply(fraglen.sp, function(x) {
                     length(x) == 1 || length(x) == 2}))) {
@@ -80,8 +80,8 @@ configuration file.\n")
         ctg.tbl <- data.frame(ctg.tbl, fraglen=as.character(fraglen),
                               stringsAsFactors=F)
     }
-    if(ncol(ctg.tbl) >= 5) {
-        colnames(ctg.tbl)[5] <- 'color'
+    if(ncol(ctg.tbl) >= 6) {
+        colnames(ctg.tbl)[6] <- 'color'
         # Validate color specifications.
         col.validated <- col2rgb(ctg.tbl$color)
     } else {

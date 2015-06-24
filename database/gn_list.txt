@@ -1,1 +1,2 @@
 ID	Assembly	Species	EnsVer	NPVer
+hg19	GRCh37	homo_sapiens	74.0	3.0

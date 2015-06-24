@@ -13,7 +13,8 @@
 
 ngsplot.version <- '2.47.1'
 # Program environment variable.
-progpath <- Sys.getenv('NGSPLOT')
+#progpath <- Sys.getenv('NGSPLOT')
+progpath <- "/mnt/officedata/ezh2/scripts/ngsplot"
 if(progpath == "") {
     stop("Set environment variable NGSPLOT before run the program. See README 
 for details.\n")
@@ -47,7 +48,7 @@ cmd.help <- function(){
 ###########################################################################
 #################### Deal with program input arguments ####################
 args <- commandArgs(T)
-args <-c("-G","hg19","-R","tss","-C","25_2264CP_KARPAS-422_DMSO_8d_H3K27me3_i94-hg19-dm6-human.bam", "-O","plots/-tss-plots","-T","test","-L","3000","-FL","300","-flynorm","1.3","-debug","1" )
+#args <-c("-G","hg19","-R","tss","-C","/mnt/officedata/ezh2/results/2015-05-28/mapping/plots/tss/config.h3k27me3.txt", "-O","plots/-tss-plots","-T","test","-L","3000","-FL","300","-flynorm","1.3","-debug","0" )
 # args <- unlist(strsplit('-G hg19 -C config.k4k27.inp.txt -R tss -O test_extr_cluster -S 0.1 -Debug 1', ' '))
 
 # Input argument parser.
@@ -61,6 +62,7 @@ reg2plot <- args.tbl['-R']
 oname <- args.tbl['-O']
 flynorm <- as.numeric(args.tbl['-flynorm'])
 
+cat("\n\nThis is a modified ngsplot programme originally developed by shenlab-sinai\n\n")
 cat("Configuring variables...")
 # Load tables of database: default.tbl, dbfile.tbl
 default.tbl <- read.delim(file.path(progpath, 'database', 'default.tbl'))
@@ -74,7 +76,7 @@ plot.args <- PlotVars(args.tbl)
 attach(plot.args)
 
 # Configuration: coverage-genelist-title relationships.
-ctg.tbl <- ConfigTbl(args.tbl, fraglen)
+ctg.tbl <- ConfigTbl(args.tbl, fraglen, flynorm)
 
 # Setup plot-related coordinates and variables.
 plotvar.list <- SetupPlotCoord(args.tbl, ctg.tbl, default.tbl, dbfile.tbl, 
@@ -149,6 +151,7 @@ cat("Done\n")
 # data for plotting.
 
 cat("Analyze bam files and calculate coverage")
+
 # Extract bam file names from configuration and determine if bam-pair is used.
 bfl.res <- bamFileList(ctg.tbl)
 bam.pair <- bfl.res$bbp  # boolean for bam-pair.
@@ -169,7 +172,7 @@ v.low.cutoff <- vector("integer", nrow(ctg.tbl))  # low count cutoffs.
 # Process the config file row by row.
 # browser()
 for(r in 1:nrow(ctg.tbl)) {  # r: index of plots/profiles.
-
+    cat("\nflynorm factor used for",ctg.tbl$title[r],"is",ctg.tbl$flynorm[r],"\n")
     reg <- ctg.tbl$glist[r]  # retrieve gene list names.
     # Create coordinate chunk indices.
     chkidx.list <- chunkIndex(nrow(coord.list[[reg]]), gcs)
@@ -192,7 +195,7 @@ for(r in 1:nrow(ctg.tbl)) {  # r: index of plots/profiles.
     }
     # browser()
     # Rprof("Rprof_covBamExons2.out", append=T)
-    result.matrix <- covMatrix(flynorm, debug, chkidx.list, coord.list[[reg]], rnaseq.gb, 
+    result.matrix <- covMatrix(as.numeric(ctg.tbl$flynorm[r]), debug, chkidx.list, coord.list[[reg]], rnaseq.gb, 
                                exonmodel, libsize, TRUE, chr.tag, pint, 
                                reg2plot, flanksize, flankfactor, m.pts, f.pts, 
                                bufsize, cov.algo, bam.files[1], sn.inbam, 
@@ -209,7 +212,7 @@ for(r in 1:nrow(ctg.tbl)) {  # r: index of plots/profiles.
         if(class(chr.tag) == 'character') {
             stop(sprintf("Read %s error: %s", bam.files[2], chr.tag))
         }
-        bkg.matrix <- covMatrix(flynorm, debug, chkidx.list, coord.list[[reg]], rnaseq.gb, 
+        bkg.matrix <- covMatrix(as.numeric(ctg.tbl$flynorm[r]), debug, chkidx.list, coord.list[[reg]], rnaseq.gb, 
                                 exonmodel, libsize, TRUE, chr.tag, pint, 
                                 reg2plot, flanksize, flankfactor, m.pts, f.pts, 
                                 bufsize, cov.algo, bam.files[2], sn.inbam, 
@@ -377,4 +380,3 @@ if(!zip(paste(out.zip, '.zip', sep=''), out.zip, extras='-q')) {
 setwd(cur.dir)
 cat("Done\n")
 cat("All done. Cheers!\n")
-
