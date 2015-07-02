@@ -48,6 +48,8 @@ cmd.help <- function(){
 ###########################################################################
 #################### Deal with program input arguments ####################
 args <- commandArgs(T)
+#args <- unlist(strsplit("-G hg19 -R tss -C /mnt/gtklab01/ahjung/ezh2/results/mapping/chromhmm-all-8/makesegmentation/config_files/config_E9_EED.txt -O /mnt/gtklab01/ahjung/ezh2/results/mapping/chromhmm-all-8/makesegmentation/analysis/test -D refseq -FL 300",' '))
+
 #args <-c("-G","hg19","-R","tss","-C","/mnt/officedata/ezh2/results/2015-05-28/mapping/plots/tss/config.h3k27me3.txt", "-O","plots/-tss-plots","-T","test","-L","3000","-FL","300","-flynorm","1.3","-debug","0" )
 # args <- unlist(strsplit('-G hg19 -C config.k4k27.inp.txt -R tss -O test_extr_cluster -S 0.1 -Debug 1', ' '))
 
